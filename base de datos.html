@@ -1,0 +1,386 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Suscripción — ArtNest</title>
+  <style>
+    :root{
+      --card-bg: rgba(255,255,255,0.88);
+      --accent-start: #0f172a;
+      --accent-mid: #7c3aed;
+      --accent-end: #06b6d4;
+      --btn-start: #16a34a;
+      --btn-end: #059669;
+      --text: #072145;
+    }
+
+    html, body { height: 100%; margin: 0; }
+
+    body {
+      font-family: Arial, sans-serif;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+      color: var(--text);
+      background: linear-gradient(135deg, var(--accent-start) 0%, #1e3a8a 35%, var(--accent-mid) 65%, var(--accent-end) 100%);
+      background-attachment: fixed;
+    }
+
+    .wrap {
+      width: 100%;
+      max-width: 540px;
+      position: relative;
+      box-sizing: border-box;
+      overflow: visible;
+    }
+
+    /* logo animado detrás del formulario */
+    .logo-bg {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .logo-bg img.logo-anim {
+      width: clamp(140px, 40vw, 420px);
+      height: auto;
+      opacity: 0.12;
+      filter: drop-shadow(0 10px 30px rgba(0,0,0,0.25)) saturate(0.9);
+      transform-origin: center;
+      /* una sola vuelta y se queda en la posición final */
+      animation: floatRotate 3.2s cubic-bezier(.2,.8,.2,1) 1 forwards;
+      display: block;
+    }
+
+    /* efecto de destellos (sparks) */
+    .logo-bg .sparks { position: absolute; inset: 0; pointer-events: none; z-index: 0; }
+    .logo-bg .spark {
+      position: absolute;
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: radial-gradient(circle at 30% 30%, #fff, #ffd94d 60%, #ff9a00 100%);
+      transform: translate(-50%, -50%) scale(0);
+      opacity: 1;
+      filter: drop-shadow(0 6px 12px rgba(255,190,40,0.6));
+      animation: sparkAnim 700ms ease-out forwards;
+      will-change: transform, opacity;
+    }
+
+    @keyframes floatRotate {
+      0%   { transform: translateY(0px) rotate(0deg) scale(1); opacity: 0.12; }
+      60%  { transform: translateY(-10px) rotate(360deg) scale(1.03); opacity: 0.14; }
+      100% { transform: translateY(0px) rotate(360deg) scale(1); opacity: 0.12; } /* queda en la posición final */
+    }
+
+    @keyframes sparkAnim {
+      0%   { transform: translate(-50%,-50%) scale(0.2); opacity: 1; }
+      40%  { transform: translate(-50%,-50%) scale(1.2); opacity: 0.9; }
+      100% { transform: translate(calc(-50% + var(--dx)), calc(-50% + var(--dy))) scale(2.4); opacity: 0; }
+    }
+
+    /* Reduce motion */
+    @media (prefers-reduced-motion: reduce) {
+      .logo-bg img.logo-anim { animation: none; opacity: 0.10; }
+      .logo-bg .spark { animation: none; opacity: 0; }
+    }
+
+    form {
+      position: relative;
+      z-index: 1;
+      background: var(--card-bg);
+      backdrop-filter: blur(6px);
+      -webkit-backdrop-filter: blur(6px);
+      padding: 22px;
+      width: 100%;
+      border-radius: 12px;
+      box-shadow: 0 10px 30px rgba(2,6,23,0.45);
+      border: 1px solid rgba(255,255,255,0.16);
+      box-sizing: border-box;
+    }
+
+    h1 { margin: 0 0 12px; font-size: 20px; color: #05203a; }
+
+    label { display: block; margin-bottom: 6px; font-weight: 700; color: #04325a; font-size: 14px; }
+
+    input, textarea {
+      width: 100%;
+      padding: 10px 12px;
+      margin-bottom: 14px;
+      border: 1px solid #cfd8e3;
+      border-radius: 8px;
+      font-size: 14px;
+      background: #fff;
+      color: var(--text);
+      box-sizing: border-box;
+    }
+
+    textarea { min-height: 100px; resize: vertical; }
+
+    .actions {
+      display: flex;
+      gap: 12px;
+      align-items: center;
+      justify-content: flex-end;
+    }
+
+    .omit-btn {
+      margin-right: auto;
+      background: transparent;
+      color: var(--text);
+      padding: 8px 12px;
+      border-radius: 8px;
+      text-decoration: none;
+      font-weight: 700;
+      border: 1px solid rgba(4,50,90,0.06);
+      transition: background .12s ease, transform .12s ease, box-shadow .12s ease;
+      box-shadow: none;
+    }
+    .omit-btn:hover { background: rgba(4,50,90,0.05); transform: translateY(-2px); box-shadow: 0 8px 20px rgba(2,6,23,0.06); }
+
+    button {
+      background: linear-gradient(90deg, var(--btn-start) 0%, var(--btn-end) 100%);
+      color: white;
+      padding: 10px 16px;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: 700;
+      box-shadow: 0 8px 20px rgba(5,150,105,0.18);
+    }
+    button:hover { transform: translateY(-1px); box-shadow: 0 12px 30px rgba(5,150,105,0.25); }
+
+    .mensaje-exito {
+      display: none;
+      text-align: center;
+      color: #0f5132;
+      background: rgba(16,185,129,0.12);
+      border-radius: 8px;
+      padding: 10px;
+      margin-top: 12px;
+      font-weight: 600;
+      position: relative;
+      z-index: 1;
+    }
+
+    @media (max-width: 480px) {
+      form { padding: 18px; border-radius: 10px; }
+      .actions { justify-content: center; gap: 10px; }
+      .omit-btn { margin-right: 0; order: -1; }
+      .logo-bg img.logo-anim { width: clamp(100px, 60vw, 300px); }
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="logo-bg" aria-hidden="true">
+      <img class="logo-anim" src="mi-logo.png" alt="logo">
+      <div class="sparks" aria-hidden="true"></div>
+    </div>
+
+    <form id="formulario" action="https://formspree.io/f/mwpaepbw" method="POST" novalidate>
+      <h1>Suscríbete a ArtNest</h1>
+
+      <fieldset style="border:0;padding:0;margin:0 0 12px">
+        <legend style="font-weight:700;margin-bottom:8px">Método de pago</legend>
+        <label style="font-weight:600"><input type="radio" name="payment_method" value="card" checked> Pagar con tarjeta / en línea</label>
+        <label style="font-weight:600;margin-left:12px"><input type="radio" name="payment_method" value="in-person"> Pagar en físico (coordinar con el director)</label>
+      </fieldset>
+
+      <div id="cardSection">
+        <div style="background-color:#fee;border:2px solid #c00;color:#c00;padding:12px;margin-bottom:12px;border-radius:4px;font-weight:600;text-align:center">
+          ❌ Pago por tarjeta no se encuentra habilitado
+        </div>
+        <label for="email">Correo electrónico</label>
+        <input type="email" name="email" id="email" required autocomplete="email" placeholder="tu@ejemplo.com" disabled>
+
+        <label for="mensaje">Mensaje (opcional)</label>
+        <textarea name="message" id="mensaje" placeholder="Puedes contarnos sobre tu talento o cómo supiste de nosotros" disabled></textarea>
+      </div>
+
+      <div id="inPersonSection" style="display:none;border:1px dashed rgba(4,50,90,0.06);padding:10px;border-radius:8px;margin-bottom:12px">
+        <strong>Pago en físico — coordina con el director</strong>
+        <p style="margin:8px 0;color:#064">Rellena tus datos y te ayudaremos a contactar al director para acordar el pago en persona.</p>
+        <label for="contact_name">Tu nombre</label>
+        <input type="text" id="contact_name" name="contact_name" placeholder="Nombre completo">
+
+        <label for="contact_phone">Teléfono (recomendado)</label>
+        <input type="tel" id="contact_phone" name="contact_phone" placeholder="+34 600 000 000">
+
+        <label for="contact_email">Correo (opcional)</label>
+        <input type="email" id="contact_email" name="contact_email" placeholder="tu@ejemplo.com">
+
+        <label for="contact_msg">Mensaje para coordinar</label>
+        <textarea id="contact_msg" name="contact_msg" placeholder="Indica dónde y cuándo prefieres pagar, y cualquier detalle"></textarea>
+
+        <div style="font-size:13px;color:#333;margin-top:8px">Al enviar, generaremos un correo dirigido al director para que se pongan de acuerdo. También registraremos tu interés.</div>
+      </div>
+
+      <div class="actions">
+        <a class="omit-btn" href="index.html" role="button" aria-label="Omitir suscripción">Omitir</a>
+        <button type="submit">Continuar</button>
+      </div>
+    </form>
+
+    <div class="mensaje-exito" id="mensajeExito" role="status" aria-live="polite">
+      ✅ ¡Te has suscrito! Redirigiendo...
+    </div>
+  </div>
+
+  <script>
+    // cuando la animación del logo termina, crea destellos y hace un flash breve
+    const logo = document.querySelector('.logo-anim');
+    const sparksContainer = document.querySelector('.logo-bg .sparks');
+
+    function createSparks(count = 10) {
+      const rect = logo.getBoundingClientRect();
+      const parentRect = sparksContainer.getBoundingClientRect();
+      for (let i = 0; i < count; i++) {
+        const s = document.createElement('span');
+        s.className = 'spark';
+        // posición relativa al contenedor .sparks (usar % para responsivo)
+        const px = (Math.random() * 100);
+        const py = (Math.random() * 100);
+        // desplazamiento final pequeño (para que se expandan en distintas direcciones)
+        const dx = (Math.random() - 0.5) * 60 + 'px';
+        const dy = (Math.random() - 0.5) * 60 + 'px';
+        s.style.left = px + '%';
+        s.style.top = py + '%';
+        s.style.setProperty('--dx', dx);
+        s.style.setProperty('--dy', dy);
+        // duración y delay aleatorios para naturalidad
+        const dur = 600 + Math.random() * 400;
+        s.style.animationDuration = dur + 'ms';
+        s.style.animationDelay = (Math.random() * 120) + 'ms';
+        sparksContainer.appendChild(s);
+        // limpiar después de la animación
+        setTimeout(() => s.remove(), dur + 300);
+      }
+    }
+
+    function flashLogo() {
+      logo.style.transition = 'filter 260ms ease, opacity 260ms ease';
+      logo.style.filter = 'brightness(1.6) drop-shadow(0 14px 40px rgba(255,200,60,0.6))';
+      logo.style.opacity = '0.18';
+      setTimeout(() => {
+        logo.style.filter = '';
+        logo.style.opacity = '0.12';
+      }, 320);
+    }
+
+    // escucha fin de animación (una sola vuelta)
+    logo.addEventListener('animationend', () => {
+      createSparks(14);
+      flashLogo();
+    });
+
+    // formulario (comportamiento con opción de pago en físico)
+    const form = document.getElementById('formulario');
+    const mensaje = document.getElementById('mensajeExito');
+    const cardSection = document.getElementById('cardSection');
+    const inPersonSection = document.getElementById('inPersonSection');
+
+    // radios para método de pago
+    const paymentRadios = Array.from(document.querySelectorAll('input[name="payment_method"]'));
+    paymentRadios.forEach(r => r.addEventListener('change', () => {
+      const v = document.querySelector('input[name="payment_method"]:checked').value;
+      if (v === 'in-person') {
+        cardSection.style.display = 'none';
+        inPersonSection.style.display = '';
+      } else {
+        cardSection.style.display = '';
+        inPersonSection.style.display = 'none';
+      }
+    }));
+
+    // obtener posible retorno desde la query string
+    const params = new URLSearchParams(window.location.search);
+    const returnToRaw = params.get('return') || '';
+    // sólo permitimos redirecciones relativas (evitar redirigir a dominios externos)
+    let returnTo = '';
+    try {
+      if (returnToRaw) {
+        const decoded = decodeURIComponent(returnToRaw);
+        if (!/^https?:\/\//i.test(decoded) && !decoded.includes('//')) {
+          returnTo = decoded;
+        }
+      }
+    } catch (e) { /* ignore */ }
+
+    form.addEventListener('submit', function (e) {
+      e.preventDefault();
+      const method = document.querySelector('input[name="payment_method"]:checked').value;
+
+      if (method === 'in-person') {
+        // recolectar datos de contacto
+        const contactName = document.getElementById('contact_name').value || '';
+        const contactPhone = document.getElementById('contact_phone').value || '';
+        const contactEmail = document.getElementById('contact_email').value || '';
+        const contactMsg = document.getElementById('contact_msg').value || '';
+
+        // enviar registro a Formspree (para tener constancia)
+        const datos = new FormData(form);
+        datos.set('payment_method', 'in-person');
+        datos.set('contact_name', contactName);
+        datos.set('contact_phone', contactPhone);
+        datos.set('contact_email', contactEmail);
+        datos.set('contact_msg', contactMsg);
+
+        fetch(form.action, { method: 'POST', body: datos, headers: { 'Accept': 'application/json' } })
+          .then(response => {
+            if (response.ok) {
+              // mostrar mensaje y marcar interés (opcional)
+              mensaje.style.display = 'block';
+              // abrir mail al director con la info para coordinar (placeholder email)
+              const directorEmail = 'tu-correo@ejemplo.com';
+              const subject = encodeURIComponent('Interés en pago en físico — Suscripción ArtNest');
+              const bodyLines = [];
+              bodyLines.push('Nombre: ' + contactName);
+              bodyLines.push('Teléfono: ' + contactPhone);
+              bodyLines.push('Correo: ' + contactEmail);
+              bodyLines.push('Mensaje: ' + contactMsg);
+              const body = encodeURIComponent(bodyLines.join('\n'));
+              // abrir cliente de correo para que el usuario confirme y envíe
+              window.open(`mailto:${directorEmail}?subject=${subject}&body=${body}`,'_blank');
+              // redirigir después de breve pausa
+              setTimeout(() => { if (returnTo) window.location.href = returnTo; else window.location.href = 'index.html'; }, 1400);
+            } else {
+              alert('Hubo un error al registrar tu interés. Intenta de nuevo.');
+            }
+          }).catch(() => { alert('No se pudo conectar con el servidor. Intenta más tarde.'); });
+
+        return;
+      }
+
+      // método por defecto: envío normal (tarjeta/en línea)
+      const datos = new FormData(form);
+      fetch(form.action, { method: 'POST', body: datos, headers: { 'Accept': 'application/json' } })
+        .then(response => {
+          if (response.ok) {
+            form.reset();
+            mensaje.style.display = 'block';
+            // marca en localStorage que el usuario está suscrito
+            localStorage.setItem('artnest_subscribed', 'true');
+            // si hay returnTo válido, redirigir ahí; si no, a index.html
+            setTimeout(() => {
+              if (returnTo) window.location.href = returnTo;
+              else window.location.href = 'index.html';
+            }, 1400);
+          } else {
+            alert('Hubo un error al enviar el formulario.');
+          }
+        }).catch(() => {
+          alert('No se pudo conectar con el servidor. Intenta más tarde.');
+        });
+
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,421 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Desarrollo de Software - ArtNest</title>
+  <style>
+    :root{
+      --primary-color:#FFA500;
+      --secondary-color:#0A192F;
+      --text-color-dark:#333;
+      --border-color:#dddddd;
+      --bg:#ffffff;
+    }
+    *{box-sizing:border-box;margin:0;padding:0}
+    body{font-family:Arial,Helvetica,sans-serif;background:var(--bg);color:var(--text-color-dark);line-height:1.6}
+    .container{max-width:1200px;margin:0 auto;padding:0 20px}
+
+    /* HEADER / MENU */
+    .main-header {
+      background: var(--secondary-color);
+      color: #fff;
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+    }
+    .main-header .container {
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:16px;
+      padding:12px 0;
+    }
+    .logo{font-weight:700;color:#fff;text-decoration:none;font-size:1.1rem}
+    .main-nav ul{list-style:none;display:flex;gap:18px;margin:0;padding:0;align-items:center}
+    .main-nav a{color:#fff;text-decoration:none;font-weight:600;padding:6px 4px;border-bottom:2px solid transparent;transition:color .18s, border-color .18s}
+    .main-nav a:hover,.main-nav a.active{color:var(--primary-color);border-bottom-color:var(--primary-color)}
+
+    /* HERO */
+    .hero-section{background:#f5f6f8;padding:34px 0;margin-bottom:18px;border-bottom:1px solid #ececec}
+    .hero-section h1{margin:0;font-size:28px;color:var(--secondary-color)}
+    .hero-section p{margin-top:8px;color:#555}
+
+    /* VIDEO PROFILES */
+    .video-profiles{padding:40px 0}
+    .videos-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:20px}
+    .video-card{background:#fff;border:1px solid var(--border-color);border-radius:8px;padding:12px;text-align:center;box-shadow:0 6px 18px rgba(0,0,0,.04);position:relative}
+    .video-thumb{width:100%;height:160px;object-fit:cover;border-radius:6px;cursor:pointer;display:block}
+    .video-title{font-weight:700;margin:10px 0 6px;color:var(--secondary-color)}
+    .video-bio{font-size:.95rem;color:#555;margin-bottom:10px;min-height:40px}
+    .play-btn,.contact-btn{background:var(--primary-color);color:#111;border:none;padding:8px 12px;border-radius:6px;cursor:pointer;font-weight:700;margin:4px}
+    .contact-btn{background:#00a86b;color:#fff}
+    .delete-btn{position:absolute;top:8px;right:8px;background:#ff4d4d;color:#fff;border:none;padding:6px 8px;border-radius:6px;cursor:pointer;display:none}
+    .contact-modal{position:fixed;inset:0;display:none;align-items:center;justify-content:center;background:rgba(0,0,0,.65);z-index:3000;padding:20px}
+    .contact-modal.open{display:flex}
+    .contact-modal .modal-content{background:#fff;border-radius:8px;padding:24px;width:clamp(300px,90vw,500px)}
+    .contact-modal .close{float:right;background:none;border:none;font-size:24px;cursor:pointer}
+    .contact-info{margin:16px 0}
+    .contact-info p{margin:8px 0;font-size:1rem}
+
+    .add-profile-form{margin-top:18px;display:grid;gap:8px;max-width:760px}
+    .add-profile-form input{padding:10px;border:1px solid var(--border-color);border-radius:6px}
+    .add-profile-form button{padding:10px 14px;border-radius:6px;border:none;background:var(--primary-color);cursor:pointer;font-weight:700}
+
+    /* MODAL */
+    .video-modal{position:fixed;inset:0;display:none;align-items:center;justify-content:center;background:rgba(0,0,0,.65);z-index:2000;padding:20px}
+    .video-modal.open{display:flex}
+    .video-modal .modal-content{width:clamp(300px,90vw,1000px);background:#000;border-radius:8px;padding:12px}
+    .video-modal video,.video-modal iframe{width:100%;height:auto;border-radius:6px;background:#000}
+    .video-modal .close{color:#fff;background:transparent;border:none;font-size:28px;cursor:pointer;float:right;margin-bottom:6px}
+
+    footer{background:#0f172a;color:#fff;padding:20px 0;margin-top:30px}
+    .footer-inner{max-width:1200px;margin:0 auto;padding:0 20px;display:flex;align-items:center;justify-content:space-between;gap:12px}
+    .admin-footer-btn{background:#222;color:#fff;padding:8px 12px;border-radius:6px;border:none;cursor:pointer}
+
+    @media (max-width:860px){ .main-nav ul{gap:10px;flex-wrap:wrap} }
+    @media (max-width:480px){ .video-thumb{height:120px} }
+  </style>
+</head>
+<body>
+  <!-- ...existing code... -->
+<header class="main-header">
+  <div class="container">
+    <a class="logo" href="index.html">ArtNest</a>
+
+    <nav class="main-nav" aria-label="Navegación principal">
+      <ul>
+        <li><a href="index.html">Home</a></li>
+        <li><a href="index.html">Servicios</a></li>
+  <li><a href="index.html#about">Acerca</a></li>
+        <li><a href="#videoProfiles">Perfiles</a></li>
+        <li><a href="contacto.html">Contacto</a></li>
+      </ul>
+    </nav>
+
+    <div style="width:10px"></div>
+  </div>
+</header>
+<!-- ...existing code... -->
+  <!-- HERO -->
+  <section class="hero-section">
+    <div class="container">
+      <h1>Musica</h1>
+      <p>Soluciones digitales a medida para creadores</p>
+    </div>
+  </section>
+
+  <main class="container">
+    <!-- Perfiles -->
+    <section class="video-profiles" id="videoProfiles">
+      <h2>Perfiles</h2>
+
+      <div class="videos-grid" id="videosGrid">
+  <div class="video-card" data-name="Artista Nombre 1" data-video="https://www.youtube.com/watch?v=ysz5S6PUM-U" data-thumb="mi-logo.png">
+          <button class="delete-btn" aria-label="Eliminar perfil">Eliminar</button>
+          <img class="video-thumb" src="mi-logo.png" alt="Perfil 1" data-video="https://www.youtube.com/watch?v=ysz5S6PUM-U">
+          <div class="video-title">Artista Nombre 1</div>
+          <div class="video-bio">Ilustración digital.</div>
+          <button class="play-btn" data-video="videos/video1.mp4">Ver perfil</button>
+        </div>
+
+  <div class="video-card" data-name="Artista Nombre 2" data-video="https://www.youtube.com/watch?v=M7lc1UVf-VE" data-thumb="mi-logo.png">
+          <button class="delete-btn" aria-label="Eliminar perfil">Eliminar</button>
+          <img class="video-thumb" src="mi-logo.png" alt="Perfil 2" data-video="https://www.youtube.com/watch?v=M7lc1UVf-VE">
+          <div class="video-title">Artista Nombre 2</div>
+          <div class="video-bio">Motion graphics.</div>
+          <button class="play-btn" data-video="videos/video2.mp4">Ver perfil</button>
+        </div>
+      </div>
+
+      <form id="addProfileForm" class="add-profile-form" novalidate>
+        <h3>Añadir tu perfil</h3>
+        <input id="p-name" type="text" placeholder="Nombre" required>
+        <input id="p-bio" type="text" placeholder="Breve descripción / especialidad">
+        <input id="p-email" type="email" placeholder="Tu correo electrónico">
+        <input id="p-phone" type="tel" placeholder="Tu número de teléfono">
+        <input id="p-thumb" type="url" placeholder="URL miniatura (thumb.jpg) o ruta local">
+        <input id="p-video" type="url" placeholder="URL de video (videos/videoX.mp4 o YouTube)" required>
+        <div style="display:flex;gap:10px;align-items:center">
+          <button type="submit">Suscribirme</button>
+          <span id="addProfileMsg" style="color:green;display:none;font-weight:700">Perfil agregado</span>
+        </div>
+        <small style="color:#666">Los perfiles se guardan en este navegador (localStorage).</small>
+      </form>
+    </section>
+  </main>
+
+  <!-- Video Modal -->
+  <div class="video-modal" id="videoModal" aria-hidden="true">
+    <div class="modal-content" role="dialog" aria-modal="true">
+      <button class="close" id="closeModal" aria-label="Cerrar">&times;</button>
+      <video id="modalVideo" controls playsinline preload="metadata"></video>
+    </div>
+  </div>
+
+  <!-- Contact Modal -->
+  <div class="contact-modal" id="contactModal" aria-hidden="true">
+    <div class="modal-content" role="dialog" aria-modal="true">
+      <button class="close" id="closeContactModal" aria-label="Cerrar">&times;</button>
+      <h2>Información de contacto</h2>
+      <div class="contact-info">
+        <p><strong>Correo:</strong> <span id="contactEmail">-</span></p>
+        <p><strong>Teléfono:</strong> <span id="contactPhone">-</span></p>
+      </div>
+    </div>
+  </div>
+
+  <!-- FOOTER con botón Admin al final -->
+  <footer>
+    <div class="footer-inner">
+      <div>&copy; 2025 ArtNest</div>
+      <div>
+        <button id="adminToggleFooter" class="admin-footer-btn">Activar Admin</button>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    (function () {
+      const STORAGE_KEY = 'artnest_profiles_v1';
+      const videosGrid = document.getElementById('videosGrid');
+      const addForm = document.getElementById('addProfileForm');
+      const msg = document.getElementById('addProfileMsg');
+      const modal = document.getElementById('videoModal');
+      const modalVideo = document.getElementById('modalVideo');
+      const closeBtn = document.getElementById('closeModal');
+      const adminBtn = document.getElementById('adminToggleFooter');
+
+      const ADMIN_PASSWORD = 'admin123'; // cambia por tu contraseña
+      let adminMode = false;
+
+      function escapeHtml(s){ return String(s || '').replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c])); }
+
+      function createCard(data, save = false){
+        const card = document.createElement('div');
+        card.className = 'video-card';
+        card.dataset.name = data.name || '';
+        card.dataset.video = data.video || '';
+        card.dataset.thumb = data.thumb || '';
+        card.dataset.email = data.email || '';
+        card.dataset.phone = data.phone || '';
+        card.innerHTML = `
+          <button class="delete-btn" aria-label="Eliminar perfil">Eliminar</button>
+          <img class="video-thumb" src="${escapeHtml(data.thumb || 'thumb-default.jpg')}" alt="${escapeHtml(data.name)}" data-video="${escapeHtml(data.video)}">
+          <div class="video-title">${escapeHtml(data.name)}</div>
+          <div class="video-bio">${escapeHtml(data.bio || '')}</div>
+          <div style="display:flex;justify-content:center;gap:6px">
+            <button class="play-btn" data-video="${escapeHtml(data.video)}">Ver perfil</button>
+            <button class="contact-btn" data-email="${escapeHtml(data.email || '')}" data-phone="${escapeHtml(data.phone || '')}">Contactar</button>
+          </div>
+        `;
+        const del = card.querySelector('.delete-btn');
+        del.addEventListener('click', ()=> handleDelete(card));
+        const contactBtn = card.querySelector('.contact-btn');
+        contactBtn.addEventListener('click', (e)=> handleContact(e, data.email || '', data.phone || ''));
+        videosGrid.appendChild(card);
+        updateDeleteButtonsVisibility();
+        if(save) saveProfile(data);
+      }
+
+      function loadProfiles(){
+        try {
+          const raw = localStorage.getItem(STORAGE_KEY);
+          if(!raw) return;
+          const arr = JSON.parse(raw);
+          arr.forEach(d => createCard(d, false));
+        } catch(e){ console.error('loadProfiles', e); }
+      }
+
+      function saveProfile(profile){
+        const arr = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
+        arr.push(profile);
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(arr));
+      }
+
+      function removeProfileFromStorage(profile){
+        try {
+          const arr = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
+          const idx = arr.findIndex(p => p.name === profile.name && p.video === profile.video);
+          if(idx > -1){
+            arr.splice(idx,1);
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(arr));
+          }
+        } catch(e){ console.error(e); }
+      }
+
+      function convertYoutubeToEmbed(url){
+        try{
+          const u = new URL(url);
+          let id='';
+          if(u.hostname.includes('youtu.be')) id = u.pathname.slice(1);
+          else id = u.searchParams.get('v') || '';
+          return 'https://www.youtube.com/embed/' + id + '?autoplay=1';
+        }catch(e){ return url; }
+      }
+
+      function openVideo(src){
+        if(!src) return;
+        if(/youtube\.com|youtu\.be/.test(src)){
+          const parent = modal.querySelector('.modal-content');
+          const oldI = parent.querySelector('iframe'); if(oldI) oldI.remove();
+          modalVideo.style.display = 'none';
+          const iframe = document.createElement('iframe');
+          iframe.src = src.includes('embed') ? src : convertYoutubeToEmbed(src);
+          iframe.width = '100%'; iframe.height = '480'; iframe.setAttribute('frameborder','0');
+          iframe.allow = 'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture';
+          parent.appendChild(iframe);
+          modal.classList.add('open'); modal.setAttribute('aria-hidden','false');
+        } else {
+          const parent = modal.querySelector('.modal-content');
+          const oldI = parent.querySelector('iframe'); if(oldI) oldI.remove();
+          modalVideo.style.display = 'block';
+          modalVideo.src = src;
+          modal.classList.add('open'); modal.setAttribute('aria-hidden','false');
+          modalVideo.currentTime = 0;
+          modalVideo.play().catch(()=>{});
+        }
+      }
+
+      function closeVideo(){
+        modalVideo.pause();
+        modalVideo.removeAttribute('src');
+        modalVideo.load();
+        const parent = modal.querySelector('.modal-content');
+        const iframe = parent.querySelector('iframe'); if(iframe) iframe.remove();
+        modal.classList.remove('open'); modal.setAttribute('aria-hidden','true');
+      }
+
+      function handleDelete(card){
+        if(!adminMode){ alert('Función disponible solo en modo administrador.'); return; }
+        const name = card.dataset.name || card.querySelector('.video-title')?.textContent || '';
+        if(!confirm(`Eliminar el perfil "${name}"?`)) return;
+        const profile = { name: card.dataset.name, video: card.dataset.video };
+        removeProfileFromStorage(profile);
+        card.remove();
+      }
+
+      function updateDeleteButtonsVisibility(){
+        document.querySelectorAll('.video-card .delete-btn').forEach(btn=>{
+          btn.style.display = adminMode ? 'inline-block' : 'none';
+        });
+      }
+
+      function normalizeExistingCards(){
+        document.querySelectorAll('#videosGrid .video-card').forEach(card=>{
+          const thumbEl = card.querySelector('.video-thumb');
+          const titleEl = card.querySelector('.video-title');
+          card.dataset.name = card.dataset.name || (titleEl ? titleEl.textContent.trim() : '');
+          card.dataset.video = card.dataset.video || (thumbEl ? thumbEl.dataset.video || '' : '');
+          card.dataset.thumb = card.dataset.thumb || (thumbEl ? thumbEl.src || '' : '');
+          if(!card.querySelector('.delete-btn')){
+            const d = document.createElement('button');
+            d.className = 'delete-btn';
+            d.textContent = 'Eliminar';
+            d.setAttribute('aria-label','Eliminar perfil');
+            d.addEventListener('click', ()=> handleDelete(card));
+            card.insertBefore(d, card.firstChild);
+          }
+        });
+        updateDeleteButtonsVisibility();
+      }
+
+      // Delegación para play buttons / thumbs
+      videosGrid.addEventListener('click', function(e){
+        const el = e.target;
+        if(el.matches('.play-btn') || el.matches('.video-thumb')){
+          const src = el.dataset.video || el.getAttribute('data-video') || el.closest('.video-card')?.dataset.video;
+          openVideo(src);
+        }
+      });
+
+      // Add profile form: requiere inicio de sesión y suscripción
+      addForm.addEventListener('submit', function(e){
+        e.preventDefault();
+        // Verificar usuario (login simple guardado en localStorage)
+        let user = null;
+        try { user = JSON.parse(localStorage.getItem('artnest_user') || 'null'); } catch(_) { user = null; }
+        if(!user){
+          const username = prompt('Debes iniciar sesión para crear un perfil. Ingresa tu nombre de usuario:');
+          if(!username){ alert('Inicio de sesión requerido para continuar.'); return; }
+          user = { username: username.trim() };
+          localStorage.setItem('artnest_user', JSON.stringify(user));
+          alert('Sesión iniciada como ' + user.username + '.');
+        }
+
+        // Verificar suscripción
+        const subscribed = localStorage.getItem('artnest_subscribed') === 'true';
+        if(!subscribed){
+          if(confirm('Para crear un perfil debes estar suscrito. ¿Deseas ir a la página de suscripción ahora?')){
+            window.location.href = 'base%20de%20datos.html';
+          }
+          return;
+        }
+
+        // Si pasó las verificaciones, proceder a crear el perfil
+        const name = document.getElementById('p-name').value.trim();
+        const bio = document.getElementById('p-bio').value.trim();
+        const email = document.getElementById('p-email').value.trim();
+        const phone = document.getElementById('p-phone').value.trim();
+        const thumb = document.getElementById('p-thumb').value.trim();
+        const video = document.getElementById('p-video').value.trim();
+        if(!name || !video){ alert('Nombre y URL de video son obligatorios.'); return; }
+        const profile = { name, bio, email, phone, thumb, video };
+        createCard(profile, true);
+        msg.style.display = 'inline-block';
+        setTimeout(()=> msg.style.display = 'none', 2000);
+        addForm.reset();
+        setTimeout(()=> videosGrid.lastElementChild.scrollIntoView({behavior:'smooth', block:'center'}), 200);
+      });
+
+      // Admin toggle in footer
+      adminBtn.addEventListener('click', ()=>{
+        if(!adminMode){
+          const pass = prompt('Contraseña de administrador:');
+          if(pass !== ADMIN_PASSWORD){ alert('Contraseña incorrecta'); return; }
+          adminMode = true;
+          adminBtn.textContent = 'Salir Admin';
+        } else {
+          adminMode = false;
+          adminBtn.textContent = 'Activar Admin';
+        }
+        updateDeleteButtonsVisibility();
+      });
+
+      // Modal controls
+      closeBtn.addEventListener('click', closeVideo);
+      modal.addEventListener('click', (e)=>{ if(e.target === modal) closeVideo(); });
+      document.addEventListener('keydown', (e)=>{ if(e.key === 'Escape' && modal.classList.contains('open')) closeVideo(); });
+      window.addEventListener('pagehide', ()=> closeVideo());
+
+      // Funciones de contacto
+      const contactModal = document.getElementById('contactModal');
+      const closeContactBtn = document.getElementById('closeContactModal');
+      const contactEmailSpan = document.getElementById('contactEmail');
+      const contactPhoneSpan = document.getElementById('contactPhone');
+
+      function handleContact(e, email, phone){
+        e.preventDefault();
+        contactEmailSpan.textContent = email || '-';
+        contactPhoneSpan.textContent = phone || '-';
+        contactModal.classList.add('open');
+        contactModal.setAttribute('aria-hidden', 'false');
+      }
+
+      function closeContactModal(){
+        contactModal.classList.remove('open');
+        contactModal.setAttribute('aria-hidden', 'true');
+      }
+
+      closeContactBtn.addEventListener('click', closeContactModal);
+      contactModal.addEventListener('click', (e)=>{ if(e.target === contactModal) closeContactModal(); });
+      document.addEventListener('keydown', (e)=>{ if(e.key === 'Escape' && contactModal.classList.contains('open')) closeContactModal(); });
+
+      // init
+      normalizeExistingCards();
+      loadProfiles();
+    })();
+  </script>
+</body>
+</html>
