@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Desarrollo de Software - ArtNest</title>
+  <title>Video juegos - ArtNest</title>
   <style>
     :root{
       --primary-color:#FFA500;
@@ -69,6 +69,19 @@
     .video-modal .modal-content{width:clamp(300px,90vw,1000px);background:#000;border-radius:8px;padding:12px}
     .video-modal video,.video-modal iframe{width:100%;height:auto;border-radius:6px;background:#000}
     .video-modal .close{color:#fff;background:transparent;border:none;font-size:28px;cursor:pointer;float:right;margin-bottom:6px}
+    .subscribe-banner {
+      background: #fff4e5;
+      border: 1px solid #ffd8a8;
+      color: #663c00;
+      padding: 12px;
+      border-radius: 8px;
+      margin-bottom: 12px;
+      display:flex;
+      gap:12px;
+      align-items:center;
+      justify-content:space-between;
+    }
+    .subscribe-banner a { background: #ff8c00; color: #fff; padding:8px 12px; border-radius:6px; text-decoration:none; font-weight:700; }
 
     footer{background:#0f172a;color:#fff;padding:20px 0;margin-top:30px}
     .footer-inner{max-width:1200px;margin:0 auto;padding:0 20px;display:flex;align-items:center;justify-content:space-between;gap:12px}
@@ -102,31 +115,17 @@
   <section class="hero-section">
     <div class="container">
       <h1>Desarrollador de Video Juegos</h1>
-      <p>Soluciones digitales a medida para creadores</p>
+      <p>Crea y desarrolla juegos inmersivos. Desde diseño hasta programación, expresa tu talento en el mundo de los videojuegos.</p>
     </div>
   </section>
 
   <main class="container">
     <!-- Perfiles -->
     <section class="video-profiles" id="videoProfiles">
+      <div id="subscribeBannerContainer"></div>
       <h2>Perfiles</h2>
 
       <div class="videos-grid" id="videosGrid">
-  <div class="video-card" data-name="Artista Nombre 1" data-video="https://www.youtube.com/watch?v=ysz5S6PUM-U" data-thumb="mi-logo.png">
-          <button class="delete-btn" aria-label="Eliminar perfil">Eliminar</button>
-          <img class="video-thumb" src="mi-logo.png" alt="Perfil 1" data-video="https://www.youtube.com/watch?v=ysz5S6PUM-U">
-          <div class="video-title">Artista Nombre 1</div>
-          <div class="video-bio">Ilustración digital.</div>
-          <button class="play-btn" data-video="videos/video1.mp4">Ver perfil</button>
-        </div>
-
-  <div class="video-card" data-name="Artista Nombre 2" data-video="https://www.youtube.com/watch?v=M7lc1UVf-VE" data-thumb="mi-logo.png">
-          <button class="delete-btn" aria-label="Eliminar perfil">Eliminar</button>
-          <img class="video-thumb" src="mi-logo.png" alt="Perfil 2" data-video="https://www.youtube.com/watch?v=M7lc1UVf-VE">
-          <div class="video-title">Artista Nombre 2</div>
-          <div class="video-bio">Motion graphics.</div>
-          <button class="play-btn" data-video="videos/video2.mp4">Ver perfil</button>
-        </div>
       </div>
 
       <form id="addProfileForm" class="add-profile-form" novalidate>
@@ -138,7 +137,7 @@
         <input id="p-thumb" type="url" placeholder="URL miniatura (thumb.jpg) o ruta local">
         <input id="p-video" type="url" placeholder="URL de video (videos/videoX.mp4 o YouTube)" required>
         <div style="display:flex;gap:10px;align-items:center">
-          <button type="submit">Suscribirme</button>
+          <button id="addProfileBtn" type="submit">Añadir perfil</button>
           <span id="addProfileMsg" style="color:green;display:none;font-weight:700">Perfil agregado</span>
         </div>
         <small style="color:#666">Los perfiles se guardan en este navegador (localStorage).</small>
@@ -186,6 +185,8 @@
       const modalVideo = document.getElementById('modalVideo');
       const closeBtn = document.getElementById('closeModal');
       const adminBtn = document.getElementById('adminToggleFooter');
+      const subscribeBannerContainer = document.getElementById('subscribeBannerContainer');
+      const addProfileBtn = document.getElementById('addProfileBtn');
 
       const ADMIN_PASSWORD = 'admin123'; // cambia por tu contraseña
       let adminMode = false;
@@ -330,30 +331,18 @@
         }
       });
 
-      // Add profile form: requiere inicio de sesión y suscripción
+      // Add profile form: requiere suscripción
       addForm.addEventListener('submit', function(e){
         e.preventDefault();
-        // Verificar usuario (login simple guardado en localStorage)
-        let user = null;
-        try { user = JSON.parse(localStorage.getItem('artnest_user') || 'null'); } catch(_) { user = null; }
-        if(!user){
-          const username = prompt('Debes iniciar sesión para crear un perfil. Ingresa tu nombre de usuario:');
-          if(!username){ alert('Inicio de sesión requerido para continuar.'); return; }
-          user = { username: username.trim() };
-          localStorage.setItem('artnest_user', JSON.stringify(user));
-          alert('Sesión iniciada como ' + user.username + '.');
-        }
-
-        // Verificar suscripción
         const subscribed = localStorage.getItem('artnest_subscribed') === 'true';
         if(!subscribed){
           if(confirm('Para crear un perfil debes estar suscrito. ¿Deseas ir a la página de suscripción ahora?')){
-            window.location.href = 'base%20de%20datos.html';
+            const returnTo = encodeURIComponent(window.location.pathname + window.location.search + window.location.hash);
+            window.location.href = `base de datos.html?return=${returnTo}`;
           }
           return;
         }
 
-        // Si pasó las verificaciones, proceder a crear el perfil
         const name = document.getElementById('p-name').value.trim();
         const bio = document.getElementById('p-bio').value.trim();
         const email = document.getElementById('p-email').value.trim();
@@ -389,6 +378,40 @@
       document.addEventListener('keydown', (e)=>{ if(e.key === 'Escape' && modal.classList.contains('open')) closeVideo(); });
       window.addEventListener('pagehide', ()=> closeVideo());
 
+      // Suscripción: si no está suscrito, mostrar banner y deshabilitar formulario
+      function ensureSubscriptionRequired(){
+        const subscribed = localStorage.getItem('artnest_subscribed');
+        if (subscribed) {
+          subscribeBannerContainer.style.display = 'none';
+          enableAddForm(true);
+          return;
+        }
+        // mostrar banner
+        subscribeBannerContainer.style.display = 'block';
+        subscribeBannerContainer.innerHTML = `
+          <div class="subscribe-banner">
+            <div>Para añadir tu perfil debes estar suscrito a ArtNest.</div>
+            <div>
+              <a id="goSubscribeBtn" href="#" role="button">Suscribirse</a>
+            </div>
+          </div>
+        `;
+        // deshabilitar inputs y botón
+        enableAddForm(false);
+        const goBtn = document.getElementById('goSubscribeBtn');
+        goBtn.addEventListener('click', function(e){
+          e.preventDefault();
+          const returnTo = encodeURIComponent(window.location.pathname + window.location.search + window.location.hash);
+          window.location.href = `base de datos.html?return=${returnTo}`;
+        });
+      }
+
+      function enableAddForm(allow){
+        const inputs = addForm.querySelectorAll('input, button, textarea');
+        inputs.forEach(i=>{ i.disabled = !allow; });
+        if (!allow) { addProfileBtn.textContent = 'Suscripción requerida'; } else { addProfileBtn.textContent = 'Añadir perfil'; }
+      }
+
       // Funciones de contacto
       const contactModal = document.getElementById('contactModal');
       const closeContactBtn = document.getElementById('closeContactModal');
@@ -415,6 +438,7 @@
       // init
       normalizeExistingCards();
       loadProfiles();
+      ensureSubscriptionRequired();
     })();
   </script>
 </body>

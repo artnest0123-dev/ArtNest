@@ -54,7 +54,7 @@ body {
 }
 
 .logo img {
-    height: 40px; /* Ajusta la altura de tu logo */
+    height: 60px; /* Ajusta la altura de tu logo */
     margin-right: 10px;
 }
 
@@ -401,7 +401,7 @@ h2 {
 @media (max-width: 768px) {
     .nav-container { flex-direction: column; gap: 12px; align-items: stretch; }
     .logo { font-size: 1.25rem; }
-    .logo img { height: 36px; }
+    .logo img { height: 60px; }
     .navbar { display: flex; justify-content: center; flex-wrap: wrap; }
     .navbar a { margin: 8px 10px; }
     .hero { padding: 100px 20px; min-height: 70vh; }
@@ -419,7 +419,7 @@ h2 {
     html { font-size: 14px; }
     .container { padding: 0 12px; }
     .logo { font-size: 1.1rem; }
-    .logo img { height: 32px; }
+    .logo img { height: 60px; }
     .navbar { display: flex; flex-direction: column; align-items: center; gap: 8px; }
     .navbar a { margin: 6px 0; font-size: 0.95rem; }
     .hero { padding: 70px 12px; min-height: 60vh; }

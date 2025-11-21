@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Desarrollo de Software - ArtNest</title>
+  <title>Música - ArtNest</title>
   <style>
     :root{
       --primary-color:#FFA500;
@@ -69,6 +69,19 @@
     .video-modal .modal-content{width:clamp(300px,90vw,1000px);background:#000;border-radius:8px;padding:12px}
     .video-modal video,.video-modal iframe{width:100%;height:auto;border-radius:6px;background:#000}
     .video-modal .close{color:#fff;background:transparent;border:none;font-size:28px;cursor:pointer;float:right;margin-bottom:6px}
+    .subscribe-banner {
+      background: #fff4e5;
+      border: 1px solid #ffd8a8;
+      color: #663c00;
+      padding: 12px;
+      border-radius: 8px;
+      margin-bottom: 12px;
+      display:flex;
+      gap:12px;
+      align-items:center;
+      justify-content:space-between;
+    }
+    .subscribe-banner a { background: #ff8c00; color: #fff; padding:8px 12px; border-radius:6px; text-decoration:none; font-weight:700; }
 
     footer{background:#0f172a;color:#fff;padding:20px 0;margin-top:30px}
     .footer-inner{max-width:1200px;margin:0 auto;padding:0 20px;display:flex;align-items:center;justify-content:space-between;gap:12px}
@@ -101,8 +114,8 @@
   <!-- HERO -->
   <section class="hero-section">
     <div class="container">
-      <h1>Musica</h1>
-      <p>Soluciones digitales a medida para creadores</p>
+      <h1>Música</h1>
+      <p>Descubre talento en composición, producción musical y arreglos profesionales</p>
     </div>
   </section>
 
@@ -129,6 +142,9 @@
         </div>
       </div>
 
+      <!-- Banner de suscripción (se mostrará si no está suscrito) -->
+      <div id="subscribeBannerContainer" style="display:none;margin-top:18px"></div>
+
       <form id="addProfileForm" class="add-profile-form" novalidate>
         <h3>Añadir tu perfil</h3>
         <input id="p-name" type="text" placeholder="Nombre" required>
@@ -138,7 +154,7 @@
         <input id="p-thumb" type="url" placeholder="URL miniatura (thumb.jpg) o ruta local">
         <input id="p-video" type="url" placeholder="URL de video (videos/videoX.mp4 o YouTube)" required>
         <div style="display:flex;gap:10px;align-items:center">
-          <button type="submit">Suscribirme</button>
+          <button id="addProfileBtn" type="submit">Suscribirme</button>
           <span id="addProfileMsg" style="color:green;display:none;font-weight:700">Perfil agregado</span>
         </div>
         <small style="color:#666">Los perfiles se guardan en este navegador (localStorage).</small>
@@ -186,6 +202,8 @@
       const modalVideo = document.getElementById('modalVideo');
       const closeBtn = document.getElementById('closeModal');
       const adminBtn = document.getElementById('adminToggleFooter');
+      const subscribeBannerContainer = document.getElementById('subscribeBannerContainer');
+      const addProfileBtn = document.getElementById('addProfileBtn');
 
       const ADMIN_PASSWORD = 'admin123'; // cambia por tu contraseña
       let adminMode = false;
@@ -389,6 +407,40 @@
       document.addEventListener('keydown', (e)=>{ if(e.key === 'Escape' && modal.classList.contains('open')) closeVideo(); });
       window.addEventListener('pagehide', ()=> closeVideo());
 
+      // Suscripción: si no está suscrito, mostrar banner y deshabilitar formulario
+      function ensureSubscriptionRequired(){
+        const subscribed = localStorage.getItem('artnest_subscribed');
+        if (subscribed) {
+          subscribeBannerContainer.style.display = 'none';
+          enableAddForm(true);
+          return;
+        }
+        // mostrar banner
+        subscribeBannerContainer.style.display = 'block';
+        subscribeBannerContainer.innerHTML = `
+          <div class="subscribe-banner">
+            <div>Para añadir tu perfil debes estar suscrito a ArtNest.</div>
+            <div>
+              <a id="goSubscribeBtn" href="#" role="button">Suscribirse</a>
+            </div>
+          </div>
+        `;
+        // deshabilitar inputs y botón
+        enableAddForm(false);
+        const goBtn = document.getElementById('goSubscribeBtn');
+        goBtn.addEventListener('click', function(e){
+          e.preventDefault();
+          const returnTo = encodeURIComponent(window.location.pathname + window.location.search + window.location.hash);
+          window.location.href = `base de datos.html?return=${returnTo}`;
+        });
+      }
+
+      function enableAddForm(allow){
+        const inputs = addForm.querySelectorAll('input, button, textarea');
+        inputs.forEach(i=>{ i.disabled = !allow; });
+        if (!allow) { addProfileBtn.textContent = 'Suscripción requerida'; } else { addProfileBtn.textContent = 'Añadir perfil'; }
+      }
+
       // Funciones de contacto
       const contactModal = document.getElementById('contactModal');
       const closeContactBtn = document.getElementById('closeContactModal');
@@ -415,6 +467,7 @@
       // init
       normalizeExistingCards();
       loadProfiles();
+      ensureSubscriptionRequired();
     })();
   </script>
 </body>
