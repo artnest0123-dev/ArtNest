@@ -152,7 +152,17 @@
         <input id="p-email" type="email" placeholder="Tu correo electrónico">
         <input id="p-phone" type="tel" placeholder="Tu número de teléfono">
         <input id="p-thumb" type="url" placeholder="URL miniatura (thumb.jpg) o ruta local">
+        <div style="display:flex;gap:8px;align-items:center">
+          <button type="button" id="pickThumbBtn">Seleccionar imagen</button>
+          <input id="p-thumb-file" type="file" accept="image/*" style="display:none">
+          <input id="p-thumb-data" type="hidden" value="">
+        </div>
         <input id="p-video" type="url" placeholder="URL de video (videos/videoX.mp4 o YouTube)" required>
+        <div style="display:flex;gap:8px;align-items:center">
+          <button type="button" id="pickVideoBtn">Seleccionar video</button>
+          <input id="p-video-file" type="file" accept="video/*" style="display:none">
+          <input id="p-video-data" type="hidden" value="">
+        </div>
         <div style="display:flex;gap:10px;align-items:center">
           <button id="addProfileBtn" type="submit">Suscribirme</button>
           <span id="addProfileMsg" style="color:green;display:none;font-weight:700">Perfil agregado</span>
@@ -207,6 +217,41 @@
 
       const ADMIN_PASSWORD = 'admin123'; // cambia por tu contraseña
       let adminMode = false;
+
+      // inputs/file pickers for thumb/video
+      const pThumbFile = document.getElementById('p-thumb-file');
+      const pVideoFile = document.getElementById('p-video-file');
+      const pThumbData = document.getElementById('p-thumb-data');
+      const pVideoData = document.getElementById('p-video-data');
+      const pThumbInput = document.getElementById('p-thumb');
+      const pVideoInput = document.getElementById('p-video');
+      const pickThumbBtn = document.getElementById('pickThumbBtn');
+      const pickVideoBtn = document.getElementById('pickVideoBtn');
+
+      pickThumbBtn.addEventListener('click', ()=> pThumbFile.click());
+      pickVideoBtn.addEventListener('click', ()=> pVideoFile.click());
+
+      pThumbFile.addEventListener('change', (e)=>{
+        const f = e.target.files && e.target.files[0];
+        if(!f) return;
+        const reader = new FileReader();
+        reader.onload = ()=>{
+          pThumbData.value = reader.result || '';
+          pThumbInput.value = f.name;
+        };
+        reader.readAsDataURL(f);
+      });
+
+      pVideoFile.addEventListener('change', (e)=>{
+        const f = e.target.files && e.target.files[0];
+        if(!f) return;
+        const reader = new FileReader();
+        reader.onload = ()=>{
+          pVideoData.value = reader.result || '';
+          pVideoInput.value = f.name;
+        };
+        reader.readAsDataURL(f);
+      });
 
       function escapeHtml(s){ return String(s || '').replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c])); }
 
@@ -465,6 +510,12 @@
       document.addEventListener('keydown', (e)=>{ if(e.key === 'Escape' && contactModal.classList.contains('open')) closeContactModal(); });
 
       // init
+      // ensure any selected files (DataURLs) are copied into the visible inputs
+      addForm.addEventListener('submit', function(e){
+        if(pThumbData && pThumbData.value){ pThumbInput.value = pThumbData.value; }
+        if(pVideoData && pVideoData.value){ pVideoInput.value = pVideoData.value; }
+      }, true);
+
       normalizeExistingCards();
       loadProfiles();
       ensureSubscriptionRequired();
