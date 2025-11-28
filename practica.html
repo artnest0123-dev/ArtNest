@@ -4,6 +4,7 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Arte y Diseño - ArtNest</title>
+  <link rel="icon" type="image/png" href="ArtNest.png">
   <style>
     :root{
       --primary-color:#FFA500;
@@ -125,9 +126,49 @@
     <section class="video-profiles" id="videoProfiles">
       <div id="subscribeBannerContainer"></div>
       <h2>Perfiles</h2>
-
       <div class="videos-grid" id="videosGrid">
-      </div>
+  <div class="video-card" 
+       data-name="Artista Nombre 1" 
+       data-video="https://www.youtube.com/watch?v=ysz5S6PUM-U" 
+       data-thumb="mi-logo.png"
+       data-email="artista1@email.com"
+       data-phone="+1 809-555-1234">
+  
+    <button class="delete-btn" aria-label="Eliminar perfil">Eliminar</button>
+    <img class="video-thumb" src="mi-logo.png" alt="Perfil 1" data-video="https://www.youtube.com/watch?v=ysz5S6PUM-U">
+    <div class="video-title">Artista Nombre 1</div>
+    <div class="video-bio">Ilustración digital.</div>
+    <div style="display:flex;justify-content:center;gap:6px">
+      <button class="play-btn" data-video="videos/video1.mp4">Ver perfil</button>
+      <button class="contact-btn" 
+              data-email="artista1@email.com" 
+              data-phone="+1 809-555-1234">Contactar</button>
+    </div>
+  </div>
+
+  <div class="video-card" 
+       data-name="Artista Nombre 2" 
+       data-video="https://www.youtube.com/watch?v=M7lc1UVf-VE" 
+       data-thumb="mi-logo.png"
+       data-email="artista2@email.com"
+       data-phone="+1 809-555-5678">
+  
+    <button class="delete-btn" aria-label="Eliminar perfil">Eliminar</button>
+    <img class="video-thumb" src="mi-logo.png" alt="Perfil 2" data-video="https://www.youtube.com/watch?v=M7lc1UVf-VE">
+    <div class="video-title">Artista Nombre 2</div>
+    <div class="video-bio">Motion graphics.</div>
+    <div style="display:flex;justify-content:center;gap:6px">
+      <button class="play-btn" data-video="videos/video2.mp4">Ver perfil</button>
+      <button class="contact-btn" 
+              data-email="artista2@email.com" 
+              data-phone="+1 809-555-5678">Contactar</button>
+    </div>
+  </div>
+</div>
+
+      
+      <!-- Banner de suscripción (se muestra si no está suscrito) -->
+      <div id="subscribeBannerContainer" style="display:none;margin-top:18px"></div>
 
       <form id="addProfileForm" class="add-profile-form" novalidate>
         <h3>Añadir tu perfil</h3>
@@ -188,7 +229,9 @@
 
   <script>
     (function () {
-      const STORAGE_KEY = 'artnest_profiles_v1';
+       // 🔑 Clave única para esta página
+      const STORAGE_KEY = 'artnest_profiles_arte';
+
       const videosGrid = document.getElementById('videosGrid');
       const addForm = document.getElementById('addProfileForm');
       const msg = document.getElementById('addProfileMsg');
@@ -199,8 +242,9 @@
       const subscribeBannerContainer = document.getElementById('subscribeBannerContainer');
       const addProfileBtn = document.getElementById('addProfileBtn');
 
-      const ADMIN_PASSWORD = 'admin123';
+      const ADMIN_PASSWORD = 'admin123'; // cambia por tu contraseña
       let adminMode = false;
+
 
       // inputs/file pickers for thumb/video
       const pThumbFile = document.getElementById('p-thumb-file');
@@ -375,6 +419,16 @@
           openVideo(src);
         }
       });
+      // Delegación para botones de contacto (funciona en precreados y nuevos)
+      videosGrid.addEventListener('click', function(e){
+        const el = e.target;
+        if(el.matches('.contact-btn')){
+          const email = el.getAttribute('data-email') || el.closest('.video-card')?.dataset.email || '';
+          const phone = el.getAttribute('data-phone') || el.closest('.video-card')?.dataset.phone || '';
+          handleContact(e, email, phone);
+        }
+      });
+ 
 
       addForm.addEventListener('submit', function(e){
         e.preventDefault();
